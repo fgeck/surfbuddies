@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:testor@127.0.0.1:27017
+#      username: admin
+#      password: testor
+#      host: 127.0.0.1
+#      port: 27017
+      database: surfbuddies
+
+
+jwt-security:
+  secret: MySuperDuperPseudoSecret-IMPORTANT-Must_ChAn!ge
+  expirationTimeInDays: 365

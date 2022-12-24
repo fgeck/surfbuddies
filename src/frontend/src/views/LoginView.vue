@@ -28,10 +28,10 @@
 <script lang="ts">
 import TextFormSingleLine from "@/components/TextFormSingleLine.vue";
 import SubmitFormButton from "@/components/SubmitFormButton.vue";
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "LoginView",
   components: { TextFormSingleLine, SubmitFormButton },
-  props: {},
   data() {
     return {
       email: "",
@@ -46,5 +46,5 @@ export default {
       console.log(`login button was clicked ${this.email} - ${this.password}`);
     },
   },
-};
+});
 </script>
