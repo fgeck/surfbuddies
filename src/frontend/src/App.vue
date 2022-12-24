@@ -1,0 +1,9 @@
+<template>
+  <nav class="m-4">
+    <router-link to="/" class="mr-5">Home</router-link>
+    <router-link to="/about">About</router-link>
+    <router-link to="/register" class="float-right">Register</router-link>
+    <router-link to="/login" class="mr-5 float-right">Login</router-link>
+  </nav>
+  <router-view />
+</template>
