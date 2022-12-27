@@ -1,46 +1,46 @@
 package com.fgeck.surfbuddies.controllers
 
+import com.fgeck.surfbuddies.dtos.LoginRequest
+import com.fgeck.surfbuddies.dtos.LoginResponse
 import com.fgeck.surfbuddies.dtos.Message
 import com.fgeck.surfbuddies.exceptions.BadRequestException
 import com.fgeck.surfbuddies.models.*
+import com.fgeck.surfbuddies.securtiy.JwtUtils
+import com.fgeck.surfbuddies.services.UserDetailsService
 import com.fgeck.surfbuddies.services.UserService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
 
 @RestController
-@RequestMapping("auth")
-class AuthController(@Autowired private val userService: UserService) {
+@RequestMapping("/api/auth")
+class AuthController(
+    private val userService: UserService,
+    private val userDetailsService: UserDetailsService,
+    private val authenticationProvider: AuthenticationProvider,
+    private val jwtUtils: JwtUtils
+) {
+    @PostMapping("/login")
+    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
+        val authentication =
+            authenticationProvider.authenticate(UsernamePasswordAuthenticationToken(request.email, request.password))
+        SecurityContextHolder.getContext().authentication = authentication
+        val userDetails = userDetailsService.loadUserByUsername(request.email)
+        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse(jwtUtils.generateToken(userDetails)))
+    }
 
-//    @PostMapping("login")
-//    fun login(@Valid @RequestBody login: Login, response: HttpServletResponse): ResponseEntity<Any> {
-//        val user = this.userService.findByEmail(email = login.email)
-//            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Message("not found"))
-//        if(!user.passwordIsEqualTo(login.password)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message("invalid password"))
-//        }
-//        val algorithm: Algorithm = Algorithm.HMAC256("secret")
-//        val token = JWT.create()
-//            .withIssuer(user.id.toString()) // WithexpiresAt needed?
-//            .sign(algorithm)
-//        val cookie = Cookie("jwt", token)
-//        cookie.isHttpOnly = true
-//
-//        response.addCookie(cookie)
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(Message("success"))
-//    }
-
-    @PostMapping("register", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun register(@Valid @RequestBody user: User): ResponseEntity<Any> {
+    @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun register(@RequestBody user: User): ResponseEntity<Any> {
         if (this.userService.userExistsByEmail(user.email)) {
             throw BadRequestException("Email address already in use") // exception, or just HTTP Response?
         }
@@ -64,7 +64,7 @@ class AuthController(@Autowired private val userService: UserService) {
 
     @PostMapping("roles")
     fun saveRole(@Valid @RequestBody body: CreateRoleForm): ResponseEntity<Any> {
-        val result = this.userService.saveRole(Role(name= ValidRoleName.valueOf(body.name)))
+        val result = this.userService.saveRole(Role(name = ValidRoleName.valueOf(body.name)))
         val location: URI = ServletUriComponentsBuilder
             .fromCurrentContextPath().path("/roles/{id}")
             .buildAndExpand(result.id).toUri()

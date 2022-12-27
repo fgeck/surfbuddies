@@ -11,7 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
 @Component
-class AppUserDetailsService(private val userRepository: UserRepository): UserDetailsService {
+class UserDetailsService(private val userRepository: UserRepository):
+    UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails {
         val user = this.userRepository.findByEmail(email)?.get() ?: throw UsernameNotFoundException("email not found")
         val authorities = ArrayList<GrantedAuthority>()

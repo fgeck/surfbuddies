@@ -5,7 +5,7 @@ import com.fgeck.surfbuddies.models.User
 import com.fgeck.surfbuddies.repositories.RoleRepository
 import com.fgeck.surfbuddies.repositories.UserRepository
 import org.bson.types.ObjectId
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 
@@ -19,10 +19,15 @@ interface IUserService {
 }
 
 @Service
-class UserService(@Autowired private val userRepository: UserRepository, @Autowired private val roleRepository: RoleRepository):
+class UserService(
+    private val userRepository: UserRepository,
+    private val roleRepository: RoleRepository,
+    private val passwordEncoder: BCryptPasswordEncoder
+) :
     IUserService {
 
     override fun saveUser(user: User): User {
+        user.password = passwordEncoder.encode(user.password)
         return this.userRepository.save(user)
     }
 

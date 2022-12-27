@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 class UserController(private val userService: UserService) {
 
-    @GetMapping("users")
+    @GetMapping("/users")
     fun getAllUSers(): ResponseEntity<Any> {
         val users = this.userService.getAllUsers()
         return ResponseEntity.status(HttpStatus.OK).body(users)

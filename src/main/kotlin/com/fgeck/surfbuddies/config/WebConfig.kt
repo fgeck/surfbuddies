@@ -8,14 +8,21 @@
 //import com.fgeck.surfbuddies.securtiy.JwtTokenProvider
 //import org.springframework.context.annotation.Bean
 //import org.springframework.context.annotation.Configuration
+//import org.springframework.http.HttpMethod
+//import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+//import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 //import org.springframework.security.config.http.SessionCreationPolicy
 //import org.springframework.security.web.SecurityFilterChain
 //import org.springframework.web.cors.CorsConfiguration
 //import org.springframework.web.cors.CorsConfigurationSource
 //import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+//import org.springframework.web.servlet.config.annotation.CorsRegistry
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 //
-//@Configuration
+//@EnableWebSecurity
+//@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 //class WebConfig(
 //    val securityConfig: SecurityConfig,
 //    val authenticationManager: AppAuthenticationManager,
@@ -23,17 +30,17 @@
 //) {
 //    @Bean
 //    @Throws(Exception::class)
-//    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
+//    fun filterChain(http: HttpSecurity): SecurityFilterChain {
 //        return http
 //            .cors()
 //            .and()
 //            .csrf().disable()
 //            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no sessions
 //            .and()
-//            .authorizeRequests()
-////            .antMatchers("/api/**").permitAll()
-////            .antMatchers(HttpMethod.POST, "/auth/register").permitAll()
-////            .antMatchers(HttpMethod.POST, "/login").permitAll()
+//            .authorizeHttpRequests()
+////            .requestMatchers("/api/**").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/login").permitAll()
 //            .anyRequest().authenticated()
 //            .and()
 //            .addFilter(JwtAuthenticationFilter(authenticationManager, securityConfig, tokenProvider))
@@ -63,14 +70,18 @@
 //        }
 //    }
 //
-////    @Bean
-////    fun corsConfigurer(): WebMvcConfigurer {
-////        return WebMvcConfigurer() {
-////
-////            @Override
-////            fun addCorsMappings(registry: CorsRegistry) {
-////                registry.addMapping("/**").allowedMethods(HttpMethod.POST.toString(), HttpMethod.DELETE.toString(), HttpMethod.GET.toString(), HttpMethod.PUT.toString())
-////            }
-////        }
-////    }
+//    @Bean
+//    fun corsConfigurer(): WebMvcConfigurer {
+//        return CustomWebMvcConfigurer() {
+//
+//            @Override
+//            fun addCorsMappings(registry: CorsRegistry) {
+//                registry.addMapping("/**").allowedMethods(HttpMethod.POST.toString(), HttpMethod.DELETE.toString(), HttpMethod.GET.toString(), HttpMethod.PUT.toString())
+//            }
+//        }
+//    }
+//}
+//
+//class CustomWebMvcConfigurer(function: () -> Unit) : WebMvcConfigurer {
+//
 //}
