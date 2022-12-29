@@ -41,7 +41,7 @@ class WebConfig(
             .authorizeHttpRequests()
             .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-            .anyRequest().authenticated()
+            .requestMatchers(HttpMethod.GET, "/api/users").authenticated()
             .and()
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
@@ -102,7 +102,7 @@ class WebConfig(
 
     @Bean
     fun corsConfigurer(): WebMvcConfigurer {
-        return CustomWebMvcConfigurer() {
+        return CustomWebMvcConfigurer {
 
             @Override
             fun addCorsMappings(registry: CorsRegistry) {
@@ -117,6 +117,4 @@ class WebConfig(
     }
 }
 
-class CustomWebMvcConfigurer(function: () -> Unit) : WebMvcConfigurer {
-
-}
+class CustomWebMvcConfigurer(function: () -> Unit) : WebMvcConfigurer

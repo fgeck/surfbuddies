@@ -1,4 +1,3 @@
 package com.fgeck.surfbuddies.dtos
 
-class Message(public val message: String) {
-}
+class Message(val message: String)

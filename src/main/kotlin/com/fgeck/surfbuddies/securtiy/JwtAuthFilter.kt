@@ -26,22 +26,21 @@ class JwtAuthFilter(
         filterChain: FilterChain
     ) {
         val authHeader: String = request.getHeader(AUTHORIZATION) ?: ""
-        var userEmail: String = ""
-        var jwtToken: String = ""
+        val userEmail: String
+        val jwtToken: String
 
-        if (authHeader == "" || !authHeader.startsWith(SecurityConfig().tokenPrefix)) {
-            filterChain.doFilter(request, response)
-        }
-        jwtToken = authHeader.substring(7)
-        userEmail = jwtUtils.extractUsername(jwtToken)
-        if (userEmail == "" && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails: UserDetails = userDetailsService.loadUserByUsername(userEmail)
-            val isTokenValid: Boolean = jwtUtils.isTokenValid(jwtToken, userDetails)
-            if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
-                val authToken: UsernamePasswordAuthenticationToken =
-                    UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-                authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = authToken
+        if (authHeader != "" && authHeader.startsWith(SecurityConfig().tokenPrefix)) {
+            jwtToken = authHeader.substring(7)
+            userEmail = jwtUtils.extractUsername(jwtToken)
+            if (userEmail == "" && SecurityContextHolder.getContext().authentication == null) {
+                val userDetails: UserDetails = userDetailsService.loadUserByUsername(userEmail)
+                val isTokenValid: Boolean = jwtUtils.isTokenValid(jwtToken, userDetails)
+                if (isTokenValid) {
+                    val authToken: UsernamePasswordAuthenticationToken =
+                        UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authToken
+                }
             }
         }
         filterChain.doFilter(request, response)
