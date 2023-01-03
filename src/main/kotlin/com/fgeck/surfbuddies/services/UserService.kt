@@ -1,8 +1,6 @@
 package com.fgeck.surfbuddies.services
 
-import com.fgeck.surfbuddies.models.Role
 import com.fgeck.surfbuddies.models.User
-import com.fgeck.surfbuddies.repositories.RoleRepository
 import com.fgeck.surfbuddies.repositories.UserRepository
 import org.bson.types.ObjectId
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -15,13 +13,11 @@ interface IUserService {
     fun userExistsByEmail(email: String): Boolean
     fun findByEmail(email: String): User?
     fun findById(id: ObjectId): User?
-    fun saveRole(role: Role): Role
 }
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val roleRepository: RoleRepository,
     private val passwordEncoder: BCryptPasswordEncoder
 ) :
     IUserService {
@@ -45,10 +41,6 @@ class UserService(
 
     override fun findById(id: ObjectId): User? {
         return this.userRepository.findById(id).orElse(null)
-    }
-
-    override fun saveRole(role: Role): Role {
-        return this.roleRepository.save(role)
     }
 
 }

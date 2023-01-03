@@ -42,6 +42,7 @@ class WebConfig(
             .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/users").authenticated()
+            .requestMatchers(HttpMethod.PUT, "/api/users/{userId}").authenticated()
             .and()
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)

@@ -15,8 +15,7 @@ class UserDetailsService(private val userRepository: UserRepository) :
     UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails {
         val user = this.userRepository.findByEmail(email)?.get() ?: throw UsernameNotFoundException("email not found")
-        val authorities = ArrayList<GrantedAuthority>()
-        user.roles.forEach { authorities.add(SimpleGrantedAuthority(it.name.toString())) }
+        val authorities = mutableSetOf<GrantedAuthority>(SimpleGrantedAuthority(user.roles.toString()))
 
         return User(
             user.email,

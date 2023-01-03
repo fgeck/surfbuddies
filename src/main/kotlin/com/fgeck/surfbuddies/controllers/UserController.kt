@@ -1,33 +1,42 @@
 package com.fgeck.surfbuddies.controllers
 
+import com.fgeck.surfbuddies.dtos.UpdateUserRequest
 import com.fgeck.surfbuddies.services.UserService
+import jakarta.validation.Valid
+import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+
 
 @RestController
 @RequestMapping("/api")
 class UserController(private val userService: UserService) {
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     fun getAllUSers(): ResponseEntity<Any> {
         val users = this.userService.getAllUsers()
         return ResponseEntity.status(HttpStatus.OK).body(users)
     }
 
-//    fun user(@CookieValue("jwt") jwt: String?): ResponseEntity<Any> {
-//        if (jwt == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message("unauthorized"))
-//        }
-//        val algorithm: Algorithm = Algorithm.HMAC256("secret") //use more secure key
-//        val verifier: JWTVerifier = JWT.require(algorithm)
-//            .withIssuer("1")
-//            .build() //Reusable verifier instance
-//
-//        val decodedJwt: DecodedJWT = verifier.verify(jwt)
-//        val u = this.userService.findById(decodedJwt.issuer.toInt())
-//        return ResponseEntity.status(HttpStatus.OK).body(Message(decodedJwt.toString()))
-//    }
+    @PutMapping("/users/{userId}")
+    fun updateUser(
+        @PathVariable("userId") userId: ObjectId,
+        @RequestBody @Valid updateUserRequest: UpdateUserRequest
+    ): ResponseEntity<Any> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val currentUser =
+            userService.findByEmail(userDetails.username) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        if (currentUser.id != userId) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
+        updateUserRequest.updateUser(currentUser)
+        val updatedUser = userService.saveUser(currentUser)
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser)
 
-
+    }
 }

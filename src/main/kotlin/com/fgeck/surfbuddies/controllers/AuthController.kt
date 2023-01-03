@@ -10,7 +10,6 @@ import com.fgeck.surfbuddies.services.UserDetailsService
 import com.fgeck.surfbuddies.services.UserService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -60,22 +59,5 @@ class AuthController(
         cookie.maxAge = 0
         response.addCookie(cookie)
         return ResponseEntity.status(HttpStatus.OK).body(Message("success"))
-    }
-
-    @PostMapping("roles")
-    fun saveRole(@Valid @RequestBody body: CreateRoleForm): ResponseEntity<Any> {
-        val result = this.userService.saveRole(Role(name = ValidRoleName.valueOf(body.name)))
-        val location: URI = ServletUriComponentsBuilder
-            .fromCurrentContextPath().path("/roles/{id}")
-            .buildAndExpand(result.id).toUri()
-
-        return ResponseEntity.created(location)
-            .body(Message("User registered successfully"))
-    }
-
-    @PostMapping("roles/addtouser")
-    fun addRoleToUser(@Valid @RequestBody roleToUserForm: RoleToUserForm): ResponseEntity<Any> {
-//        this.userService.addRoleToUser(roleToUserForm.email, ValidRoleName.valueOf(roleToUserForm.role))
-        return ResponseEntity.ok().build()
     }
 }
