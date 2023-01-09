@@ -10,6 +10,7 @@ import com.fgeck.surfbuddies.services.UserDetailsService
 import com.fgeck.surfbuddies.services.UserService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
-
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
@@ -30,7 +30,7 @@ class AuthController(
     private val jwtUtils: JwtUtils
 ) {
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
+    fun login(@RequestBody @Valid request: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
         val authentication =
             authenticationProvider.authenticate(UsernamePasswordAuthenticationToken(request.email, request.password))
         SecurityContextHolder.getContext().authentication = authentication
@@ -39,7 +39,7 @@ class AuthController(
     }
 
     @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun register(@RequestBody user: User): ResponseEntity<Any> {
+    fun register(@Valid @RequestBody user: User): ResponseEntity<Any> {
         if (this.userService.userExistsByEmail(user.email)) {
             throw BadRequestException("Email address already in use") // exception, or just HTTP Response?
         }
