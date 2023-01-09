@@ -12,6 +12,7 @@ token=$(curl -X POST -H "Content-Type: application/json" \
   http://localhost:8080/api/auth/login | jq -r '.token')
 
 # Update Users name
-curl -X POST -H "Authorization: Bearer $token" \
-  --data '{"firstname": "Henri"}' \
-  http://localhost:8080/api/
+curl -X PUT -H "Authorization: Bearer $token" \
+  -H "Content-Type: application/json" \
+  --data '{"firstname": "Duderino"}' \
+  http://localhost:8080/api/users/XXX

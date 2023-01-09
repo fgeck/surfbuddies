@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 
 enum class UserGroup {
@@ -24,7 +27,7 @@ enum class Sport(name: String) {
 
 @Document
 data class User(
-    @NotBlank @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) var password: String,
+    @NotBlank @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) private var password: String,
     @Email var email: String,
     @Id
     var id: ObjectId = ObjectId.get(),
@@ -33,6 +36,75 @@ data class User(
     var userGroup: UserGroup = UserGroup.TEACHER,
     var sports: MutableSet<Sport> = mutableSetOf(),
     var profilePicturePath: String = "",
-    
-    var roles: Role = Role.USER,
-)
+
+    var roles: MutableSet<Role> = mutableSetOf(Role.USER),
+) : UserDetails {
+    private var enabled: Boolean = true
+    private var accountNonExpired: Boolean = true
+    private var credentialsNonExpired: Boolean = true
+    private var accountNonLocked: Boolean = true
+
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        val authorities: MutableSet<GrantedAuthority> = mutableSetOf()
+        this.roles.forEach {
+            authorities.add(
+                SimpleGrantedAuthority(it.name)
+            )
+        }
+        return authorities
+    }
+
+    fun setAuthorities(authorities: MutableSet<GrantedAuthority>) {
+        val newRoles = mutableSetOf<Role>()
+        authorities.forEach { newRoles.add(Role.valueOf(it.authority.toString())) }
+        this.roles = newRoles
+    }
+
+    override fun getPassword(): String {
+        return this.password
+    }
+
+    fun setPassword(password: String) {
+        this.password = password
+    }
+
+    override fun getUsername(): String {
+        return this.email
+    }
+
+    fun setUsername(username: String) {
+        this.email = username
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return this.accountNonExpired
+    }
+
+    fun setAccountNonExpired(accountNonExpired: Boolean) {
+        this.accountNonExpired = accountNonExpired
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return this.accountNonLocked
+    }
+
+    fun setAccountNonLocked(accountNonLocked: Boolean) {
+        this.accountNonLocked = accountNonLocked
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return this.credentialsNonExpired
+    }
+
+    fun setCredentialsNonExpired(credentialsNonExpired: Boolean) {
+        this.credentialsNonExpired = credentialsNonExpired
+    }
+
+    override fun isEnabled(): Boolean {
+        return this.enabled
+    }
+
+    fun setEnabled(enabled: Boolean) {
+        this.enabled = enabled
+    }
+}

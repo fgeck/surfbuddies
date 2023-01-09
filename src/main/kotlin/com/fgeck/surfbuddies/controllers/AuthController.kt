@@ -34,8 +34,8 @@ class AuthController(
         val authentication =
             authenticationProvider.authenticate(UsernamePasswordAuthenticationToken(request.email, request.password))
         SecurityContextHolder.getContext().authentication = authentication
-        val userDetails = userDetailsService.loadUserByUsername(request.email)
-        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse(jwtUtils.generateToken(userDetails)))
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(LoginResponse(jwtUtils.generateToken(authentication.principal as User)))
     }
 
     @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])

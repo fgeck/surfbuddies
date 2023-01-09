@@ -57,25 +57,6 @@ class WebConfig(
         return authenticationProvider
     }
 
-//    @Bean
-//    @Throws(Exception::class)
-//    fun configure(authenticationManagerBuilder: AuthenticationManagerBuilder) {
-//        authenticationManagerBuilder.userDetailsService(userDetailsService)
-//            .passwordEncoder(securityConfig.bCryptPasswordEncoder())
-//    }
-
-//    @Bean
-//    @Throws(Exception::class)
-//    fun authenticationManager(
-//        http: HttpSecurity
-//    ): AuthenticationManager {
-//        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
-//            .userDetailsService(this.userDetailsService)
-//            .passwordEncoder(SecurityConfig().bCryptPasswordEncoder())
-//            .and()
-//            .build()
-//    }
-
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource = UrlBasedCorsConfigurationSource().also { cors ->
         CorsConfiguration().apply {
