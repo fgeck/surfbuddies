@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="min-h-screen">
     <h1>The idea of Surfbuddies</h1>
     <p>
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aut aperiam
