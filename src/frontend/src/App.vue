@@ -5,5 +5,7 @@
     <router-link to="/register" class="float-right">Register</router-link>
     <router-link to="/login" class="mr-5 float-right">Login</router-link>
   </nav>
-  <router-view />
+  <div class="bg-gray-200">
+    <router-view />
+  </div>
 </template>
