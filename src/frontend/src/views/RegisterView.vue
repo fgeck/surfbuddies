@@ -48,7 +48,10 @@
               </li>
             </ul>
           </div>
-          <div v-if="userType === 'teacher'">
+          <!-- <div
+            class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+          ></div> -->
+          <div v-if="userType === 'TEACHER'">
             <TextFormSingleLine
               label="Firstname"
               type="text"
@@ -121,7 +124,7 @@ export default defineComponent({
       email: "",
       password: "",
       passwordConfirmation: "",
-      userType: "teacher",
+      userType: "TEACHER",
       sports: [],
     };
   },
