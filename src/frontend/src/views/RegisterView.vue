@@ -16,9 +16,10 @@
                 <div class="flex items-center pl-3">
                   <input
                     type="radio"
-                    value="teacher"
+                    value="TEACHER"
                     name="list-radio"
-                    v-model="type"
+                    required
+                    v-model="userType"
                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2"
                   />
                   <label
@@ -32,9 +33,10 @@
                 <div class="flex items-center pl-3">
                   <input
                     type="radio"
-                    value="school"
+                    value="SCHOOL"
                     name="list-radio"
-                    v-model="type"
+                    required
+                    v-model="userType"
                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2"
                   />
                   <label
@@ -46,7 +48,7 @@
               </li>
             </ul>
           </div>
-          <div v-if="type === 'teacher'">
+          <div v-if="userType === 'teacher'">
             <TextFormSingleLine
               label="Firstname"
               type="text"
@@ -62,18 +64,25 @@
             <TextFormSingleLine
               label="Name of Surfschool"
               type="text"
-              v-model="surfschoolName"
+              v-model="schoolName"
             />
           </div>
-          <TextFormSingleLine label="Email" type="text" v-model="email" />
+          <TextFormSingleLine
+            label="Email"
+            type="email"
+            required
+            v-model="email"
+          />
           <TextFormSingleLine
             label="Password"
             type="password"
+            required
             v-model="password"
           />
           <TextFormSingleLine
             label="Confirm Password"
             type="password"
+            required
             v-model="passwordConfirmation"
           />
           <span class="text-xs text-red-400">Password must be same!</span>
@@ -97,23 +106,27 @@
 import { defineComponent } from "vue";
 import SubmitFormButton from "../components/SubmitFormButton.vue";
 import TextFormSingleLine from "../components/TextFormSingleLine.vue";
+import { RegisterModel } from "@/models/Register";
+import { UserType } from "@/models/User";
+import { RouterLink } from "vue-router";
 
 export default defineComponent({
   name: "RegisterView",
   components: { TextFormSingleLine, SubmitFormButton },
   data() {
     return {
-      surfschoolName: "",
+      schoolName: "",
       firstname: "",
       lastname: "",
       email: "",
       password: "",
       passwordConfirmation: "",
-      type: "teacher",
+      userType: "teacher",
+      sports: [],
     };
   },
   methods: {
-    submitRegistration() {
+    async submitRegistration() {
       if (
         this.password.trim() === "" ||
         this.passwordConfirmation.trim() === "" ||
@@ -121,19 +134,57 @@ export default defineComponent({
       ) {
         return;
       }
-      if (this.type === "teacher") {
+
+      let userToRegister: RegisterModel;
+      const userType: UserType =
+        UserType[this.userType.toUpperCase() as keyof typeof UserType];
+      console.log(userType);
+      if (userType === UserType.SCHOOL) {
+        if (this.schoolName.trim() === "") {
+          return;
+        }
+        userToRegister = new RegisterModel(
+          this.email,
+          this.password,
+          userType,
+          this.schoolName,
+          "",
+          "",
+          this.sports
+        );
+      } else {
         if (this.firstname.trim() === "" || this.lastname.trim() === "") {
           return;
         }
-      } else {
-        if (this.surfschoolName.trim() === "") {
-          return;
-        }
+        userToRegister = new RegisterModel(
+          this.email,
+          this.password,
+          userType,
+          "",
+          this.firstname,
+          this.lastname,
+          this.sports
+        );
       }
 
       console.log(
-        `Registering new user: ${this.firstname} - ${this.lastname} - ${this.email} - ${this.password}`
+        // ToDo: Remove
+        `Registering new user: type: ${this.userType} - firstname: ${this.firstname} - lastname: ${this.lastname} - email: ${this.email} - pw: ${this.password}`
       );
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify(userToRegister),
+          headers: { "Content-Type": "application/json; charset=UTF-8" },
+        });
+        if (!response.ok) {
+          throw new Error(
+            `could not register user. status: ${response.status} message: ${response.body}`
+          );
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 });
