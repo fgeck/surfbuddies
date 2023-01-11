@@ -1,6 +1,7 @@
 package com.fgeck.surfbuddies.securtiy
 
 import com.fgeck.surfbuddies.config.SecurityConfig
+import com.fgeck.surfbuddies.models.User
 import com.fgeck.surfbuddies.services.UserDetailsService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -22,13 +23,13 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
         key = Keys.hmacShaKeyFor(securityProperties.secret.toByteArray())
     }
 
-    fun generateToken(userDetails: UserDetails): String {
+    fun generateToken(user: User): String {
         val claims: Map<String, Any> = HashMap<String, Any>()
-        return createToken(claims, userDetails)
+        return createToken(claims, user)
     }
 
-    fun generateToken(userDetails: UserDetails, claims: Map<String, Any>): String {
-        return createToken(claims, userDetails)
+    fun generateToken(user: User, claims: Map<String, Any>): String {
+        return createToken(claims, user)
     }
 
     fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
@@ -50,7 +51,7 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
         return claims.expiration.before(Date())
     }
 
-    private fun createToken(claims: Map<String, Any>, userDetails: UserDetails): String {
+    private fun createToken(claims: Map<String, Any>, user: User): String {
         val authClaims: MutableList<String> = mutableListOf()
 
         val dateNow = Date()
@@ -58,9 +59,12 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
         c.time = dateNow
         c.add(Calendar.DATE, securityProperties.expirationTimeInDays)
         val validUntil = c.time
-        return Jwts.builder().setClaims(claims)
-            .setSubject(userDetails.username)
-            .claim("auth", authClaims)
+        return Jwts.builder()
+            .setClaims(claims)
+            .setSubject(user.id.toString())
+            .claim("given_name", user.firstname)
+            .claim("family_name", user.lastname)
+            .claim("email", user.email)
             .setIssuedAt(dateNow)
             .setExpiration(validUntil)
             .signWith(key, SignatureAlgorithm.HS512)
