@@ -109,7 +109,7 @@
 import { defineComponent } from "vue";
 import SubmitFormButton from "../components/SubmitFormButton.vue";
 import TextFormSingleLine from "../components/TextFormSingleLine.vue";
-import { RegisterModel } from "@/models/Register";
+import { RegisterRequest } from "@/models/Register";
 import { UserType } from "@/models/User";
 import { RouterLink } from "vue-router";
 
@@ -138,7 +138,7 @@ export default defineComponent({
         return;
       }
 
-      let userToRegister: RegisterModel;
+      let userToRegister: RegisterRequest;
       const userType: UserType =
         UserType[this.userType.toUpperCase() as keyof typeof UserType];
       console.log(userType);
@@ -146,7 +146,7 @@ export default defineComponent({
         if (this.schoolName.trim() === "") {
           return;
         }
-        userToRegister = new RegisterModel(
+        userToRegister = new RegisterRequest(
           this.email,
           this.password,
           userType,
@@ -159,7 +159,7 @@ export default defineComponent({
         if (this.firstname.trim() === "" || this.lastname.trim() === "") {
           return;
         }
-        userToRegister = new RegisterModel(
+        userToRegister = new RegisterRequest(
           this.email,
           this.password,
           userType,

@@ -29,6 +29,7 @@
 import TextFormSingleLine from "@/components/TextFormSingleLine.vue";
 import SubmitFormButton from "@/components/SubmitFormButton.vue";
 import { defineComponent } from "vue";
+import { LoginRequest, LoginResponse } from "@/models/Login";
 export default defineComponent({
   name: "LoginView",
   components: { TextFormSingleLine, SubmitFormButton },
@@ -39,11 +40,29 @@ export default defineComponent({
     };
   },
   methods: {
-    submitLogin() {
-      if (this.email.trim() === "" || this.password.trim() === "") {
+    async submitLogin() {
+      const login = new LoginRequest(this.email, this.password);
+      if (login.email.trim() === "" || login.password.trim() === "") {
         return;
       }
-      console.log(`login button was clicked ${this.email} - ${this.password}`);
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify(login),
+          headers: { "Content-Type": "application/json; charset=UTF-8" },
+        });
+        if (!response.ok) {
+          throw new Error(
+            `could not login user. status: ${response.status} message: ${response.body}`
+          );
+        }
+        const loginResponse = (await response.json()) as LoginResponse;
+        localStorage.setItem("token", loginResponse.token);
+        this.$router.push({ path: "/" });
+      } catch (e) {
+        console.log(e);
+        return;
+      }
     },
   },
 });
