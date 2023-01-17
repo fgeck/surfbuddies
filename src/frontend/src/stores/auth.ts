@@ -49,6 +49,8 @@ export const authStore = defineStore("auth", {
     logout() {
       this.token = "";
       this.decodedToken = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("decodedToken");
       router.push({ path: "/" });
     },
   },

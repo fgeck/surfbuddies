@@ -2,15 +2,15 @@
   <div class="text-center text-xl">
     <h1 class="">Used for testing components</h1>
   </div>
-  <MultiSelect />
+  <UserMenuDropdown />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import MultiSelect from "../components/MultiSelect.vue";
+import UserMenuDropdown from "../components/UserMenuDropdown.vue";
 
 export default defineComponent({
   name: "TestView",
-  components: { MultiSelect },
+  components: { UserMenuDropdown },
 });
 </script>

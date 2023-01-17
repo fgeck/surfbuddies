@@ -87,7 +87,7 @@
           />
           <span class="text-xs text-red-400">Password must be same!</span>
           <SubmitFormButton
-            name="Creat Account"
+            name="Create Account"
             @buttonClicked="submitRegistration"
           />
           <div class="mt-6 text-grey-dark">
@@ -137,7 +137,6 @@ export default defineComponent({
       let userToRegister: RegisterRequest;
       const userType: UserType =
         UserType[this.userType.toUpperCase() as keyof typeof UserType];
-      console.log(userType);
       if (userType === UserType.SCHOOL) {
         if (this.schoolName.trim() === "") {
           return;
@@ -166,10 +165,6 @@ export default defineComponent({
         );
       }
 
-      console.log(
-        // ToDo: Remove
-        `Registering new user: type: ${this.userType} - firstname: ${this.firstname} - lastname: ${this.lastname} - email: ${this.email} - pw: ${this.password}`
-      );
       try {
         const response = await fetch("/api/auth/register", {
           method: "POST",
