@@ -48,9 +48,6 @@
               </li>
             </ul>
           </div>
-          <!-- <div
-            class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-          ></div> -->
           <div v-if="userType === 'TEACHER'">
             <TextFormSingleLine
               label="Firstname"
@@ -111,7 +108,6 @@ import SubmitFormButton from "../components/SubmitFormButton.vue";
 import TextFormSingleLine from "../components/TextFormSingleLine.vue";
 import { RegisterRequest } from "@/models/Register";
 import { UserType } from "@/models/User";
-import { RouterLink } from "vue-router";
 
 export default defineComponent({
   name: "RegisterView",
@@ -185,6 +181,7 @@ export default defineComponent({
             `could not register user. status: ${response.status} message: ${response.body}`
           );
         }
+        this.$router.push({ path: "/login" });
       } catch (e) {
         console.log(e);
       }

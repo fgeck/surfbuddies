@@ -3,6 +3,8 @@ import HomeView from "../views/HomeView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import LoginView from "../views/LoginView.vue";
 import TestView from "@/views/TestView.vue";
+import { authStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -34,11 +36,24 @@ const routes: Array<RouteRecordRaw> = [
     name: "register",
     component: RegisterView,
   },
+  { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(async (to) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const publicPages: string[] = ["/home", "/about", "/login", "/register"];
+  const authRequired = !publicPages.includes(to.path);
+  const store = authStore();
+  const { token } = storeToRefs(store);
+
+  if (authRequired && !token) {
+    return "/login";
+  }
 });
 
 export default router;
