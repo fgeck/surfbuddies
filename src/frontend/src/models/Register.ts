@@ -1,9 +1,9 @@
-import { Sport, UserType } from "./User";
+import { Sport, UserGroup } from "./User";
 
 export class RegisterRequest {
   email: string;
   password: string;
-  userType: UserType = UserType.UNKNOWN;
+  userGroup: UserGroup = UserGroup.UNKNOWN;
   schoolname: string;
   firstname: string;
   lastname: string;
@@ -12,7 +12,7 @@ export class RegisterRequest {
   constructor(
     email: string,
     password: string,
-    userType: UserType,
+    userGroup: UserGroup,
     schoolname: string,
     firstname: string,
     lastname: string,
@@ -20,7 +20,7 @@ export class RegisterRequest {
   ) {
     this.email = email;
     this.password = password;
-    this.userType = userType;
+    this.userGroup = userGroup;
     this.schoolname = schoolname;
     this.firstname = firstname;
     this.lastname = lastname;

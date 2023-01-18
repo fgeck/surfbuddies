@@ -5,6 +5,7 @@ import LoginView from "../views/LoginView.vue";
 import TestView from "@/views/TestView.vue";
 import { authStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import ProfileView from "@/views/ProfileView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -35,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/register",
     name: "register",
     component: RegisterView,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileView,
   },
   { path: "/:pathMatch(.*)*", redirect: "/" },
 ];

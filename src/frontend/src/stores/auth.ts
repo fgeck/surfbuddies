@@ -53,5 +53,11 @@ export const authStore = defineStore("auth", {
       localStorage.removeItem("decodedToken");
       router.push({ path: "/" });
     },
+    withBearerToken() {
+      return { Authorization: `Bearer ${this.token}` };
+    },
+    userIdFromToken() {
+      return this.decodedToken?.sub;
+    },
   },
 });

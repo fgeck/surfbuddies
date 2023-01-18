@@ -1,7 +1,7 @@
 export class User {
   email: string;
   password: string;
-  userType: UserType = UserType.UNKNOWN;
+  userGroup: UserGroup = UserGroup.UNKNOWN;
   schoolname: string;
   firstname: string;
   lastname: string;
@@ -11,7 +11,7 @@ export class User {
   constructor(
     email: string,
     password: string,
-    userType: UserType,
+    userGroup: UserGroup,
     schoolname: string,
     firstname: string,
     lastname: string,
@@ -19,7 +19,7 @@ export class User {
   ) {
     this.email = email;
     this.password = password;
-    this.userType = userType;
+    this.userGroup = userGroup;
     this.schoolname = schoolname;
     this.firstname = firstname;
     this.lastname = lastname;
@@ -27,7 +27,7 @@ export class User {
   }
 }
 
-export enum UserType {
+export enum UserGroup {
   UNKNOWN = "UNKNOWN",
   TEACHER = "TEACHER",
   SCHOOL = "SCHOOl",

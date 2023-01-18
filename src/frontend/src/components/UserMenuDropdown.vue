@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import { authStore } from "@/stores/auth";
+import { userStore } from "@/stores/user";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -39,8 +40,10 @@ export default defineComponent({
     },
     logoutUser() {
       this.dropdownClicked();
-      const store = authStore();
-      store.logout();
+      const authenticationStore = authStore();
+      const loggedinUserStore = userStore();
+      loggedinUserStore.logout();
+      authenticationStore.logout();
     },
   },
 });

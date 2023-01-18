@@ -19,7 +19,7 @@
                     value="TEACHER"
                     name="list-radio"
                     required
-                    v-model="userType"
+                    v-model="userGroup"
                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2"
                   />
                   <label
@@ -36,7 +36,7 @@
                     value="SCHOOL"
                     name="list-radio"
                     required
-                    v-model="userType"
+                    v-model="userGroup"
                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2"
                   />
                   <label
@@ -48,7 +48,7 @@
               </li>
             </ul>
           </div>
-          <div v-if="userType === 'TEACHER'">
+          <div v-if="userGroup === 'TEACHER'">
             <TextFormSingleLine
               label="Firstname"
               type="text"
@@ -107,7 +107,7 @@ import { defineComponent } from "vue";
 import SubmitFormButton from "../components/SubmitFormButton.vue";
 import TextFormSingleLine from "../components/TextFormSingleLine.vue";
 import { RegisterRequest } from "@/models/Register";
-import { UserType } from "@/models/User";
+import { UserGroup } from "@/models/User";
 
 export default defineComponent({
   name: "RegisterView",
@@ -120,7 +120,7 @@ export default defineComponent({
       email: "",
       password: "",
       passwordConfirmation: "",
-      userType: "TEACHER",
+      userGroup: "TEACHER",
       sports: [],
     };
   },
@@ -135,16 +135,16 @@ export default defineComponent({
       }
 
       let userToRegister: RegisterRequest;
-      const userType: UserType =
-        UserType[this.userType.toUpperCase() as keyof typeof UserType];
-      if (userType === UserType.SCHOOL) {
+      const userGroup: UserGroup =
+        UserGroup[this.userGroup.toUpperCase() as keyof typeof UserGroup];
+      if (userGroup === UserGroup.SCHOOL) {
         if (this.schoolName.trim() === "") {
           return;
         }
         userToRegister = new RegisterRequest(
           this.email,
           this.password,
-          userType,
+          userGroup,
           this.schoolName,
           "",
           "",
@@ -157,7 +157,7 @@ export default defineComponent({
         userToRegister = new RegisterRequest(
           this.email,
           this.password,
-          userType,
+          userGroup,
           "",
           this.firstname,
           this.lastname,

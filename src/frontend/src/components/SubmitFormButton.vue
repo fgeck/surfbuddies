@@ -15,7 +15,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "SubmitFormButton",
-  props: ["name"],
+  props: {
+    name: {
+      type: String,
+      default: "",
+    },
+  },
   emits: ["buttonClicked"],
   methods: {
     buttonClicked() {
