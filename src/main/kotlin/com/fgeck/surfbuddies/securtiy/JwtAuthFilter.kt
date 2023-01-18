@@ -31,7 +31,7 @@ class JwtAuthFilter(
 
         if (authHeader != "" && authHeader.startsWith(SecurityConfig().tokenPrefix)) {
             jwtToken = authHeader.substring(7)
-            userEmail = jwtUtils.extractUsername(jwtToken)
+            userEmail = jwtUtils.extractEmail(jwtToken)
             if (userEmail.isNotEmpty() && (SecurityContextHolder.getContext().authentication == null)) {
                 val userDetails: UserDetails = userDetailsService.loadUserByUsername(userEmail)
                 val isTokenValid: Boolean = jwtUtils.isTokenValid(jwtToken, userDetails)

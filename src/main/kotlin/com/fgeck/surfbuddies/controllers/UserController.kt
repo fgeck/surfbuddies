@@ -7,8 +7,6 @@ import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 
 
@@ -23,20 +21,22 @@ class UserController(private val userService: UserService) {
         return ResponseEntity.status(HttpStatus.OK).body(users)
     }
 
+    @GetMapping("/users/{userId}")
+    fun getUser(@PathVariable("userId") userId: ObjectId): ResponseEntity<Any> {
+        val currentUser =
+            userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        return ResponseEntity.status(HttpStatus.OK).body(currentUser)
+    }
+
     @PutMapping("/users/{userId}")
     fun updateUser(
         @PathVariable("userId") userId: ObjectId,
         @RequestBody @Valid updateUserRequest: UpdateUserRequest
     ): ResponseEntity<Any> {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val currentUser =
-            userService.findByEmail(userDetails.username) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        if (currentUser.id != userId) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-        }
+            userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         updateUserRequest.updateUser(currentUser)
         val updatedUser = userService.saveUser(currentUser)
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser)
-
     }
 }

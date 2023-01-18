@@ -33,7 +33,7 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
     }
 
     fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
-        val username: String = extractUsername(token)
+        val username: String = extractEmail(token)
         return username == userDetails.username && !isTokenExpired(token)
     }
 
@@ -41,9 +41,9 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
     }
 
-    fun extractUsername(token: String): String {
+    fun extractEmail(token: String): String {
         val claims: Claims = extractAllClaims(token)
-        return claims.subject
+        return claims.get("email", String::class.java) ?: ""
     }
 
     fun isTokenExpired(token: String): Boolean {
