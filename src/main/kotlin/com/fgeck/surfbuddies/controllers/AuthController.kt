@@ -3,7 +3,6 @@ package com.fgeck.surfbuddies.controllers
 import com.fgeck.surfbuddies.dtos.LoginRequest
 import com.fgeck.surfbuddies.dtos.LoginResponse
 import com.fgeck.surfbuddies.dtos.Message
-import com.fgeck.surfbuddies.exceptions.BadRequestException
 import com.fgeck.surfbuddies.models.*
 import com.fgeck.surfbuddies.securtiy.JwtUtils
 import com.fgeck.surfbuddies.services.UserDetailsService
@@ -41,19 +40,18 @@ class AuthController(
     @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun register(@Valid @RequestBody user: User): ResponseEntity<Any> {
         if (this.userService.userExistsByEmail(user.email)) {
-            throw BadRequestException("Email address already in use") // exception, or just HTTP Response?
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Message("user already exists"))
         }
-
         val result = this.userService.saveUser(user)
         val location: URI = ServletUriComponentsBuilder
             .fromCurrentContextPath().path("/user/me/{id}")
             .buildAndExpand(result.id).toUri()
 
         return ResponseEntity.created(location)
-            .body(Message("User registered successfully"))
+            .body(Message("user registered successfully"))
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     fun logout(response: HttpServletResponse): ResponseEntity<Any> {
         val cookie = Cookie("jwt", "")
         cookie.maxAge = 0

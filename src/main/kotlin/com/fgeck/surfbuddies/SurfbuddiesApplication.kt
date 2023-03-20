@@ -12,14 +12,8 @@ class SurfbuddiesApplication {
 
     @Bean
     fun init(userService: UserService) = CommandLineRunner {
-//		for (role in ValidRoleName.values()) {
-//			userService.saveRole(Role(role))
-//		}
 //        userService.saveUser(User(password = "1234", email = "f@g.de"))
-//			userService.addRoleToUser("f@g.de", ValidRoleName.ADMIN)
-//			userService.saveUser(User(password = "1234", email = "user@eins.de"))
-//			userService.addRoleToUser("user@eins.de", ValidRoleName.USER)
-
+//        userService.saveUser(User(password = "1234", email = "user@eins.de"))
     }
 }
 

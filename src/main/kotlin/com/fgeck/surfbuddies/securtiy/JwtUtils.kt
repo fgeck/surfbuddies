@@ -24,12 +24,7 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
     }
 
     fun generateToken(user: User): String {
-        val claims: Map<String, Any> = HashMap<String, Any>()
-        return createToken(claims, user)
-    }
-
-    fun generateToken(user: User, claims: Map<String, Any>): String {
-        return createToken(claims, user)
+        return createToken(user)
     }
 
     fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
@@ -51,20 +46,18 @@ class JwtUtils(private val userDetailsService: UserDetailsService, private val s
         return claims.expiration.before(Date())
     }
 
-    private fun createToken(claims: Map<String, Any>, user: User): String {
-        val authClaims: MutableList<String> = mutableListOf()
-
+    private fun createToken(user: User): String {
         val dateNow = Date()
         val c = Calendar.getInstance()
         c.time = dateNow
         c.add(Calendar.DATE, securityProperties.expirationTimeInDays)
         val validUntil = c.time
         return Jwts.builder()
-            .setClaims(claims)
             .setSubject(user.id.toString())
             .claim("given_name", user.firstname)
             .claim("family_name", user.lastname)
             .claim("email", user.email)
+            .claim("roles", user.roles)
             .setIssuedAt(dateNow)
             .setExpiration(validUntil)
             .signWith(key, SignatureAlgorithm.HS512)
