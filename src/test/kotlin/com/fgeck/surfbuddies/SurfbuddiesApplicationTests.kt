@@ -66,6 +66,5 @@ class SurfbuddiesApplicationTests {
         )
 
         assertNotNull(jwt)
-        
     }
 }
